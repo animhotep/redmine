@@ -50,6 +50,17 @@
   width: 40px;
   height: 40px;
 }
+#tmv-top-counter {
+  position: absolute;
+  top: -48px;
+  left: 0;
+  right: 0;
+  text-align: center;
+  color: #fff;
+  font-size: 14px;
+  font-family: "helvetica neue", helvetica, arial, sans-serif;
+  opacity: 0.9;
+}
 .tmv-visually-hidden {
   position: absolute !important;
   height: 1px; width: 1px;

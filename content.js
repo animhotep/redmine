@@ -22,6 +22,7 @@
     overlay.setAttribute('aria-modal', 'true');
     overlay.innerHTML = `
       <div id="tmv-container" aria-live="polite">
+        <div id="tmv-top-counter" aria-live="polite"></div>
         <img id="tmv-image" alt="Image preview" />
         <div id="tmv-description" aria-live="polite"></div>
         <button id="tmv-prev" class="tmv-btn" aria-label="Previous image" title="Previous (←)">❮</button>
@@ -64,7 +65,10 @@
     console.log(STATE)
 
     const counter = $('#tmv-counter');
-    if (counter) counter.textContent = `Image ${STATE.index + 1} of ${STATE.images.length}`;
+    const topCounter = $('#tmv-top-counter');
+    const label = `${STATE.index + 1} of ${STATE.images.length} images`;
+    if (counter) counter.textContent = label;
+    if (topCounter) topCounter.textContent = label;
 
     overlay.classList.add('tmv-open');
     document.body.classList.add('tmv-no-scroll');
@@ -110,7 +114,10 @@
       desc.style.display = text ? '' : 'none';
     }
     const counter = $('#tmv-counter');
-    if (counter) counter.textContent = `Image ${STATE.index + 1} of ${STATE.images.length}`;
+    const topCounter = $('#tmv-top-counter');
+    const label = `${STATE.index + 1} of ${STATE.images.length} images`;
+    if (counter) counter.textContent = label;
+    if (topCounter) topCounter.textContent = label;
   }
 
   function buildDownloadSrc(el) {
