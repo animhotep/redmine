@@ -1,0 +1,59 @@
+/* Styles for the injected modal viewer */
+#tmv-overlay {
+  position: fixed;
+  inset: 0;
+  background: rgba(0,0,0,0.85);
+  z-index: 2147483647; /* max to stay above site UI */
+  display: none;
+}
+#tmv-overlay.tmv-open { display: flex; }
+#tmv-container {
+  position: relative;
+  margin: auto;
+  max-width: 90vw;
+  max-height: 90vh;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+#tmv-image {
+  max-width: 90vw;
+  max-height: 90vh;
+  object-fit: contain;
+  box-shadow: 0 0 32px rgba(0,0,0,0.6);
+  border-radius: 6px;
+  background: #111;
+}
+.tmv-btn {
+  position: absolute;
+  top: 50%;
+  transform: translateY(-50%);
+  color: white;
+  background: rgba(0,0,0,0.4);
+  border: 1px solid rgba(255,255,255,0.3);
+  border-radius: 999px;
+  width: 44px;
+  height: 44px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  user-select: none;
+}
+#tmv-prev { left: -56px; }
+#tmv-next { right: -56px; }
+#tmv-close {
+  position: absolute;
+  top: -48px;
+  right: 0;
+  width: 40px;
+  height: 40px;
+}
+.tmv-visually-hidden {
+  position: absolute !important;
+  height: 1px; width: 1px;
+  overflow: hidden;
+  clip: rect(1px, 1px, 1px, 1px);
+  white-space: nowrap;
+}
+body.tmv-no-scroll { overflow: hidden !important; }
