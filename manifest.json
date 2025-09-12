@@ -1,7 +1,7 @@
 {
   "manifest_version": 3,
   "name": "Thumbnails Modal Viewer",
-  "version": "1.0.0",
+  "version": "1.0.1",
   "description": "Find all images under .thumbnails and open them in a modal with next/prev navigation.",
   "action": {
     "default_title": "Thumbnails Modal Viewer"

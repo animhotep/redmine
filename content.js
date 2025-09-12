@@ -23,6 +23,7 @@
     overlay.innerHTML = `
       <div id="tmv-container" aria-live="polite">
         <img id="tmv-image" alt="Image preview" />
+        <div id="tmv-description" aria-live="polite"></div>
         <button id="tmv-prev" class="tmv-btn" aria-label="Previous image" title="Previous (←)">❮</button>
         <button id="tmv-next" class="tmv-btn" aria-label="Next image" title="Next (→)">❯</button>
         <button id="tmv-close" class="tmv-btn" aria-label="Close" title="Close (Esc)">✕</button>
@@ -53,6 +54,14 @@
 
     const item = STATE.images[STATE.index];
     img.src = item.downloadSrc || item.src;
+
+    const desc = $('#tmv-description');
+    if (desc) {
+      const text = item.description || '';
+      desc.textContent = text;
+      desc.style.display = text ? '' : 'none';
+    }
+    console.log(STATE)
 
     const counter = $('#tmv-counter');
     if (counter) counter.textContent = `Image ${STATE.index + 1} of ${STATE.images.length}`;
@@ -94,6 +103,12 @@
     if (!img || STATE.index < 0) return;
     const item = STATE.images[STATE.index];
     img.src = item.downloadSrc || item.src;
+    const desc = $('#tmv-description');
+    if (desc) {
+      const text = item.description || '';
+      desc.textContent = text;
+      desc.style.display = text ? '' : 'none';
+    }
     const counter = $('#tmv-counter');
     if (counter) counter.textContent = `Image ${STATE.index + 1} of ${STATE.images.length}`;
   }
@@ -128,10 +143,12 @@
       }
       const src = el.currentSrc || el.src;
       const downloadSrc = buildDownloadSrc(el) || src;
+      const description = getDescription(el);
+      console.log(description)
       const key = downloadSrc + '|' + (el.alt || '') + '|' + items.length;
       if (!unique.has(key)) {
         unique.add(key);
-        items.push({ el, src, downloadSrc });
+        items.push({ el, src, downloadSrc, description });
       }
     }
     STATE.images = items;
@@ -194,3 +211,17 @@
     init();
   }
 })();
+
+
+function getDescription(imgEl) {
+  try {
+    const note = imgEl.closest('div.note');
+    if (!note) return '';
+    const header = note.querySelector('h4.note-header');
+    if (!header) return '';
+    const text = (header.textContent || '').trim().replace(/\s+/g, ' ');
+    return text;
+  } catch (_) {
+    return '';
+  }
+}
