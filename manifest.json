@@ -1,10 +1,10 @@
 {
   "manifest_version": 3,
-  "name": "Thumbnails Modal Viewer",
+  "name": "Redmine 2.0",
   "version": "1.0.1",
-  "description": "Find all images under .thumbnails and open them in a modal with next/prev navigation.",
+  "description": "Improves Redmine",
   "action": {
-    "default_title": "Thumbnails Modal Viewer"
+    "default_title": "Redmine 2.0"
   },
   "background": {
     "service_worker": "service_worker.js"

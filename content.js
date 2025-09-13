@@ -228,6 +228,7 @@
 
       //close form
       form.querySelectorAll('a')[8].click();
+      addLoading();
       
       let html = '';
       if (postRes.ok) {
@@ -255,7 +256,6 @@
       const doc = parser.parseFromString(html, 'text/html');
       const newHistory = doc.querySelector('#history');
       const curHistory = document.querySelector('#history');
-
       if (newHistory && curHistory) {
         // Try to append only the newest comment block
         let candidate = null;
@@ -279,14 +279,27 @@
           }
         }
       }
-     
-      // Reset form (clear note/comment field and attachments)
-      try { form.reset(); } catch (_) {}
 
+      const loaderEl = document.getElementById('loader');
+      if (loaderEl) loaderEl.remove();
       if (submitter) submitter.disabled = false;
     } catch (err) {
       console.error('Async issue submit failed', err);
     }
+  }
+
+  function addLoading() {
+    const loader = `<div id="loader" class="journal has-notes">
+          <div id="note-29" class="note">
+          <div class="contextual">
+          </div>
+      <h4 class="note-header">
+      </h4>
+  
+      <div id="journal-462422-notes" class="wiki"><p>Loading...</p></div>
+    </div>
+    </div>`
+    document.getElementById('history').insertAdjacentHTML('beforeend', loader);
   }
 
   function setupAsyncIssueForm() {

@@ -3,9 +3,9 @@
 // but included to follow the tutorial bootstrap structure.
 
 chrome.runtime.onInstalled.addListener(() => {
-  console.log('Thumbnails Modal Viewer installed.');
+  console.log('Redmine 2.0 installed.');
 });
 
 chrome.runtime.onActivate?.addListener?.(() => {
-  console.log('Thumbnails Modal Viewer activated.');
+  console.log('Redmine 2.0 activated.');
 });
