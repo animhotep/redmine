@@ -62,7 +62,6 @@
       desc.textContent = text;
       desc.style.display = text ? '' : 'none';
     }
-    console.log(STATE)
 
     const counter = $('#tmv-counter');
     const topCounter = $('#tmv-top-counter');
@@ -151,7 +150,6 @@
       const src = el.currentSrc || el.src;
       const downloadSrc = buildDownloadSrc(el) || src;
       const description = getDescription(el);
-      console.log(description)
       const key = downloadSrc + '|' + (el.alt || '') + '|' + items.length;
       if (!unique.has(key)) {
         unique.add(key);
@@ -194,6 +192,8 @@
         bindClicks();
         collectImages();
       }
+      // Also (re)bind async submit for issue form if it appears dynamically
+      setupAsyncIssueForm();
     });
 
     observer.observe(document.documentElement, {
@@ -204,12 +204,81 @@
     });
   }
 
+  async function handleAsyncIssueSubmit(e) {
+    try {
+      e.preventDefault();
+      const form = e.currentTarget;
+      if (!(form instanceof HTMLFormElement)) return;
+
+      const submitter = e.submitter || form.querySelector('[type="submit"]');
+      if (submitter) submitter.disabled = true;
+
+      const action = location.href;
+      const method = (form.getAttribute('method') || 'POST').toUpperCase();
+      const formData = new FormData(form);
+
+      const res = await fetch(action, {
+        method,
+        body: formData,
+        credentials: 'same-origin',
+        redirect: 'follow',
+      });
+
+      if (!res.ok) throw new Error(`Request failed: ${res.status}`);
+      const html = await res.text();
+
+      const parser = new DOMParser();
+      const doc = parser.parseFromString(html, 'text/html');
+      const newHistory = doc.querySelector('#history');
+      const curHistory = document.querySelector('#history');
+
+      if (newHistory && curHistory) {
+        // Try to append only the newest comment block
+        let candidate = null;
+        // Prefer Redmine-like .journal blocks
+        const journals = newHistory.querySelectorAll('.journal');
+        if (journals.length) {
+          candidate = journals[journals.length - 1];
+        } else if (newHistory.lastElementChild) {
+          candidate = newHistory.lastElementChild;
+        }
+        if (candidate) {
+          const candId = candidate.id || candidate.getAttribute('data-id');
+          let exists = false;
+          if (candId) {
+            exists = !!curHistory.querySelector(`#${CSS.escape(candId)}`);
+          } else if (curHistory.lastElementChild) {
+            exists = curHistory.lastElementChild.outerHTML === candidate.outerHTML;
+          }
+          if (!exists) {
+            curHistory.appendChild(candidate.cloneNode(true));
+          }
+        }
+      }
+
+      // Reset form (clear note/comment field and attachments)
+      try { form.reset(); } catch (_) {}
+
+      if (submitter) submitter.disabled = false;
+    } catch (err) {
+      console.error('Async issue submit failed', err);
+    }
+  }
+
+  function setupAsyncIssueForm() {
+    const form = document.getElementById('issue-form');
+    if (!form || form.dataset.tmvAsync === '1') return;
+    form.dataset.tmvAsync = '1';
+    form.addEventListener('submit', handleAsyncIssueSubmit, true);
+  }
+
   function init() {
     if (STATE.initialized) return;
     STATE.initialized = true;
     bindClicks();
     collectImages();
     setupMutationObserver();
+    setupAsyncIssueForm();
   }
 
   if (document.readyState === 'loading') {
