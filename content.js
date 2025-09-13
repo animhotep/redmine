@@ -227,7 +227,7 @@
       });
 
       //close form
-      form.querySelectorAll('a')[8].click();
+      form.querySelector('a[onclick="$(\'#update\').hide(); return false;"]').click();
       addLoading();
       
       let html = '';
@@ -279,6 +279,22 @@
           }
         }
       }
+
+      // Update optimistic locking fields to avoid conflicts on subsequent submits
+      try {
+        const newForm = doc.getElementById('issue-form');
+        if (newForm && form) {
+          const mappings = [
+            'input[name="issue[lock_version]"]',
+            'input[name="last_journal_id"]',
+          ];
+          for (const sel of mappings) {
+            const src = newForm.querySelector(sel);
+            const dst = form.querySelector(sel);
+            if (src && dst) dst.value = src.value;
+          }
+        }
+      } catch (_) {}
 
       const loaderEl = document.getElementById('loader');
       if (loaderEl) loaderEl.remove();
