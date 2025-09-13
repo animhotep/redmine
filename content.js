@@ -298,6 +298,10 @@
 
       const loaderEl = document.getElementById('loader');
       if (loaderEl) loaderEl.remove();
+
+      // Clear notes textarea after successful submission
+      document.getElementById('issue_notes').value = '';
+
       if (submitter) submitter.disabled = false;
     } catch (err) {
       console.error('Async issue submit failed', err);

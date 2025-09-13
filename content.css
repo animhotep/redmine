@@ -52,12 +52,12 @@
 }
 #tmv-top-counter {
   position: absolute;
-  top: -48px;
+  top: -30px;
   left: 0;
   right: 0;
   text-align: center;
   color: #fff;
-  font-size: 14px;
+  font-size: 10px;
   font-family: "helvetica neue", helvetica, arial, sans-serif;
   opacity: 0.9;
 }
