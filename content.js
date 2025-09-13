@@ -213,20 +213,40 @@
       const submitter = e.submitter || form.querySelector('[type="submit"]');
       if (submitter) submitter.disabled = true;
 
-      const action = location.href;
+      const action = form.action || location.href;
       const method = (form.getAttribute('method') || 'POST').toUpperCase();
       const formData = new FormData(form);
 
-      const res = await fetch(action, {
+      // Submit without following redirects to avoid HTTPS->HTTP downgrade (mixed content)
+      const postRes = await fetch(action, {
         method,
         body: formData,
         credentials: 'same-origin',
-        redirect: 'follow',
+        redirect: 'manual',
       });
 
-      if (!res.ok) throw new Error(`Request failed: ${res.status}`);
-      const html = await res.text();
-
+      let html = '';
+      if (postRes.ok) {
+        // Server responded with a full page (no redirect). Use it.
+        html = await postRes.text();
+      } else if (postRes.type === 'opaqueredirect' || (postRes.status >= 300 && postRes.status < 400)) {
+        // Most Redmine instances redirect after POST. Since following may downgrade to HTTP,
+        // explicitly reload the current page over HTTPS to fetch updated history.
+        const refreshUrl = new URL(location.href);
+        try {
+          // If current context is already HTTPS, this keeps it HTTPS; otherwise, do not force.
+          if (location.protocol === 'https:') refreshUrl.protocol = 'https:';
+        } catch (_) {}
+        const getRes = await fetch(refreshUrl.toString(), {
+          method: 'GET',
+          credentials: 'same-origin',
+          redirect: 'follow',
+        });
+        if (!getRes.ok) throw new Error(`Follow-up GET failed: ${getRes.status}`);
+        html = await getRes.text();
+      } else {
+        throw new Error(`Request failed: ${postRes.status}`);
+      }
       const parser = new DOMParser();
       const doc = parser.parseFromString(html, 'text/html');
       const newHistory = doc.querySelector('#history');
@@ -255,7 +275,7 @@
           }
         }
       }
-
+     
       // Reset form (clear note/comment field and attachments)
       try { form.reset(); } catch (_) {}
 
