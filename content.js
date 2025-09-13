@@ -294,6 +294,15 @@
     if (!form || form.dataset.tmvAsync === '1') return;
     form.dataset.tmvAsync = '1';
     form.addEventListener('submit', handleAsyncIssueSubmit, true);
+    // Submit form on Command+Enter (Mac). We only use metaKey per request.
+    form.addEventListener('keydown', (e) => {
+      if ((e.key === 'Enter' && e.metaKey)||(e.key === 'Enter' && e.ctrlKey)) {
+        e.preventDefault();
+        const submitter = form.querySelector('[type="submit"]');
+        submitter.click();
+      }
+    }, true);
+
   }
 
   function init() {
