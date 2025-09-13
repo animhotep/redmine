@@ -208,6 +208,7 @@
     try {
       e.preventDefault();
       const form = e.currentTarget;
+      
       if (!(form instanceof HTMLFormElement)) return;
 
       const submitter = e.submitter || form.querySelector('[type="submit"]');
@@ -225,6 +226,9 @@
         redirect: 'manual',
       });
 
+      //close form
+      form.querySelectorAll('a')[8].click();
+      
       let html = '';
       if (postRes.ok) {
         // Server responded with a full page (no redirect). Use it.
