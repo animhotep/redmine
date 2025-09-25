@@ -11,7 +11,7 @@
   },
   "content_scripts": [
     {
-      "matches": ["<all_urls>"],
+      "matches": ["https://tracker.sendpulse.com/*"],
       "js": ["content.js"],
       "css": ["content.css"],
       "run_at": "document_idle"
@@ -20,7 +20,7 @@
   "web_accessible_resources": [
     {
       "resources": ["inject_select2.js"],
-      "matches": ["<all_urls>"]
+      "matches": ["https://tracker.sendpulse.com/*"]
     }
   ]
 }
