@@ -1,15 +1,4 @@
-// History watcher for Redmine issue pages
-// Extracted from content.js to a dedicated file
 (function () {
-  const HISTORY_WATCH = { timer: null };
-
-  function shouldWatchHistory() {
-    try {
-      return location.href.startsWith('https://tracker.sendpulse.com/issues/');
-    } catch (_) {
-      return false;
-    }
-  }
 
   // Periodically checks for new history entries and appends new .journal.has-notes
   async function refreshHistoryOnce() {
@@ -64,12 +53,9 @@
   }
 
   function setupHistoryWatcher() {
-    if (!shouldWatchHistory()) return;
-    if (HISTORY_WATCH.timer) return;
-    // Initial check shortly after load
-    setTimeout(refreshHistoryOnce, 1500);
-    // Then poll periodically
-    HISTORY_WATCH.timer = setInterval(refreshHistoryOnce, 20000);
+    if (!location.href.startsWith('https://tracker.sendpulse.com/issues/')) return;
+    
+    setInterval(refreshHistoryOnce, 10000);
   }
 
   // Expose to other content scripts
