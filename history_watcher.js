@@ -19,6 +19,25 @@
       const fetchedTab = doc.getElementById('tab-content-history');
       if (!fetchedTab) return;
 
+      // Sync optimistic locking fields on the issue form if they changed
+      try {
+        const newForm = doc.getElementById('issue-form');
+        const curForm = document.getElementById('issue-form');
+        if (newForm && curForm) {
+          const mappings = [
+            'input[name="issue[lock_version]"]',
+            'input[name="last_journal_id"]',
+          ];
+          for (const sel of mappings) {
+            const src = newForm.querySelector(sel);
+            const dst = curForm.querySelector(sel);
+            if (src && dst && dst.value !== src.value) {
+              dst.value = src.value;
+            }
+          }
+        }
+      } catch (_) { }
+
       const curHtml = (currentTab.innerHTML || '').trim();
       const newHtml = (fetchedTab.innerHTML || '').trim();
       if (curHtml === newHtml) return; // nothing changed
