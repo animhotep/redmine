@@ -159,26 +159,6 @@
         }
     }
 
-    function collectImages() {
-        const nodes = $all(SELECTOR);
-        const unique = new Set();
-        const items = [];
-        for (const el of nodes) {
-            if (!(el instanceof HTMLImageElement)) continue;
-            if (el.dataset.tmvBound === '1') {
-                // Keep already bound elements in items list as well
-            }
-            const src = el.currentSrc || el.src;
-            const downloadSrc = buildDownloadSrc(el) || src;
-            const description = getDescription(el);
-            const key = downloadSrc + '|' + (el.alt || '') + '|' + items.length;
-            if (!unique.has(key)) {
-                unique.add(key);
-                items.push({el, src, downloadSrc, description});
-            }
-        }
-        STATE.images = items;
-    }
 
     function bindClicks() {
         $all(SELECTOR).forEach((imgEl, idx) => {
@@ -188,7 +168,9 @@
             imgEl.addEventListener('click', (e) => {
                 e.preventDefault();
                 e.stopPropagation();
-                collectImages();
+                STATE.images = (typeof collectImages === 'function')
+                    ? collectImages(SELECTOR, buildDownloadSrc, getDescription)
+                    : [];
                 const index = STATE.images.findIndex(item => item.el === imgEl);
                 openModal(index >= 0 ? index : 0);
             });
@@ -211,7 +193,9 @@
             }
             if (shouldRebind) {
                 bindClicks();
-                collectImages();
+                STATE.images = (typeof collectImages === 'function')
+                    ? collectImages(SELECTOR, buildDownloadSrc, getDescription)
+                    : [];
             }
             // Also (re)bind async submit for issue form if it appears dynamically
             setupAsyncIssueForm();
@@ -366,7 +350,9 @@
         if (STATE.initialized) return;
         STATE.initialized = true;
         bindClicks();
-        collectImages();
+        STATE.images = (typeof collectImages === 'function')
+            ? collectImages(SELECTOR, buildDownloadSrc, getDescription)
+            : [];
         setupMutationObserver();
         setupAsyncIssueForm();
         addSelect2();

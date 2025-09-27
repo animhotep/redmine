@@ -12,7 +12,7 @@
   "content_scripts": [
     {
       "matches": ["https://tracker.sendpulse.com/*"],
-      "js": ["history_watcher.js", "content.js"],
+      "js": ["history_watcher.js", "images_collector.js", "content.js"],
       "css": ["content.css"],
       "run_at": "document_idle"
     }
