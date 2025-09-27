@@ -39,6 +39,19 @@
         STATE.images = items;
     }
 
+    function getDescription(imgEl) {
+        try {
+            const note = imgEl.closest('div.note');
+            if (!note) return '';
+            const header = note.querySelector('h4.note-header');
+            if (!header) return '';
+            const text = (header.textContent || '').trim().replace(/\s+/g, ' ');
+            return text;
+        } catch (_) {
+            return '';
+        }
+    }
+
     function buildModalOnce() {
         if ($('#tmv-overlay')) return; // already built
 
@@ -180,8 +193,7 @@
             return null;
         }
     }
-
-
+    
     function bindClicks() {
         $all(SELECTOR).forEach((imgEl, idx) => {
             if (imgEl.dataset.tmvBound === '1') return;
@@ -194,36 +206,6 @@
                 const index = STATE.images.findIndex(item => item.el === imgEl);
                 openModal(index >= 0 ? index : 0);
             });
-        });
-    }
-
-    function setupMutationObserver() {
-        const observer = new MutationObserver((mutations) => {
-            let shouldRebind = false;
-            for (const m of mutations) {
-                if (m.type === 'childList') {
-                    if ([...m.addedNodes].some(n => n.nodeType === 1 && (n.matches?.(SELECTOR) || n.querySelector?.(SELECTOR)))) {
-                        shouldRebind = true;
-                        break;
-                    }
-                } else if (m.type === 'attributes' && m.target instanceof HTMLImageElement && m.target.matches(SELECTOR)) {
-                    shouldRebind = true;
-                    break;
-                }
-            }
-            if (shouldRebind) {
-                bindClicks();
-                collectImages();
-            }
-            // Also (re)bind async submit for issue form if it appears dynamically
-            setupAsyncIssueForm();
-        });
-
-        observer.observe(document.documentElement, {
-            childList: true,
-            subtree: true,
-            attributes: true,
-            attributeFilter: ['src']
         });
     }
 
@@ -369,7 +351,6 @@
         STATE.initialized = true;
         bindClicks();
         collectImages();
-        setupMutationObserver();
         setupAsyncIssueForm();
         addSelect2();
         setupHistoryWatcher();
@@ -392,18 +373,4 @@ function addSelect2() {
         s.remove();
     };
     (document.head || document.documentElement).appendChild(s);
-}
-
-
-function getDescription(imgEl) {
-    try {
-        const note = imgEl.closest('div.note');
-        if (!note) return '';
-        const header = note.querySelector('h4.note-header');
-        if (!header) return '';
-        const text = (header.textContent || '').trim().replace(/\s+/g, ' ');
-        return text;
-    } catch (_) {
-        return '';
-    }
 }
