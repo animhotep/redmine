@@ -18,6 +18,27 @@
         return Array.from(root.querySelectorAll(sel));
     }
 
+    function collectImages() {
+        const nodes = $all(SELECTOR);
+        const unique = new Set();
+        const items = [];
+        for (const el of nodes) {
+            if (!(el instanceof HTMLImageElement)) continue;
+            if (el.dataset.tmvBound === '1') {
+                // Keep already bound elements in items list as well
+            }
+            const src = el.currentSrc || el.src;
+            const downloadSrc = buildDownloadSrc(el) || src;
+            const description = getDescription(el);
+            const key = downloadSrc + '|' + (el.alt || '') + '|' + items.length;
+            if (!unique.has(key)) {
+                unique.add(key);
+                items.push({el, src, downloadSrc, description});
+            }
+        }
+        STATE.images = items;
+    }
+
     function buildModalOnce() {
         if ($('#tmv-overlay')) return; // already built
 
@@ -36,7 +57,7 @@
         <span id="tmv-counter" class="tmv-visually-hidden" aria-live="polite"></span>
       </div>
     `;
-
+        console.log(overlay)
         overlay.addEventListener('click', (e) => {
             // Close when clicking outside the image/container
             if (e.target === overlay) closeModal();
@@ -61,6 +82,7 @@
     }
 
     function openModal(index) {
+        console.log(index)
         if (!STATE.images.length) return;
         STATE.index = index;
         buildModalOnce();
@@ -168,9 +190,7 @@
             imgEl.addEventListener('click', (e) => {
                 e.preventDefault();
                 e.stopPropagation();
-                STATE.images = (typeof collectImages === 'function')
-                    ? collectImages(SELECTOR, buildDownloadSrc, getDescription)
-                    : [];
+                collectImages();
                 const index = STATE.images.findIndex(item => item.el === imgEl);
                 openModal(index >= 0 ? index : 0);
             });
@@ -193,9 +213,7 @@
             }
             if (shouldRebind) {
                 bindClicks();
-                STATE.images = (typeof collectImages === 'function')
-                    ? collectImages(SELECTOR, buildDownloadSrc, getDescription)
-                    : [];
+                collectImages();
             }
             // Also (re)bind async submit for issue form if it appears dynamically
             setupAsyncIssueForm();
@@ -350,9 +368,7 @@
         if (STATE.initialized) return;
         STATE.initialized = true;
         bindClicks();
-        STATE.images = (typeof collectImages === 'function')
-            ? collectImages(SELECTOR, buildDownloadSrc, getDescription)
-            : [];
+        collectImages();
         setupMutationObserver();
         setupAsyncIssueForm();
         addSelect2();
