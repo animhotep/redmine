@@ -4,4 +4,6 @@
       $('.select2-results__options').scrollTop(0);
     },40)
   });
+
+  $('.wiki img').hide();
 })();

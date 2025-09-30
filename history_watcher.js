@@ -72,7 +72,7 @@
   }
 
   function setupHistoryWatcher() {
-    if (!location.href.startsWith('https://tracker.sendpulse.com/issues/')) return;
+    if (!location.href.includes('/issues/')) return;
     
     setInterval(refreshHistoryOnce, 10000);
   }

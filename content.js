@@ -70,7 +70,6 @@
         <span id="tmv-counter" class="tmv-visually-hidden" aria-live="polite"></span>
       </div>
     `;
-        console.log(overlay)
         overlay.addEventListener('click', (e) => {
             // Close when clicking outside the image/container
             if (e.target === overlay) closeModal();
@@ -95,7 +94,6 @@
     }
 
     function openModal(index) {
-        console.log(index)
         if (!STATE.images.length) return;
         STATE.index = index;
         buildModalOnce();
