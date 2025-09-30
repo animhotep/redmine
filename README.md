@@ -1,3 +1,5 @@
 # upload to store
 
-` zip -r r.zip .`
+```bash
+zip -r r.zip .
+```
