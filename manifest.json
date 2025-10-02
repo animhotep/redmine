@@ -1,7 +1,7 @@
 {
   "manifest_version": 3,
   "name": "Redmine 2.0",
-  "version": "1.0.7",
+  "version": "1.0.8",
   "description": "Improves Redmine",
   "action": {
     "default_title": "Redmine 2.0"

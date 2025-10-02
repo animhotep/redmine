@@ -328,6 +328,7 @@
     }
 
     function setupAsyncIssueForm() {
+        if (location.href.includes('/issues/new')) return;
         const form = document.getElementById('issue-form');
         if (!form || form.dataset.tmvAsync === '1') return;
         form.dataset.tmvAsync = '1';
